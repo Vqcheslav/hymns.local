@@ -1,0 +1,16 @@
+{% for hymn in hymns %}
+    <div class="hymns-div">
+        <h1>
+            Номер: {{ hymn.hymnId }}
+        </h1>
+        <h6>
+            Категория: {{ hymn.category.title }}
+        </h6>
+        <p class="chorus-p">
+            Припев: {{ hymn.chorus }}
+        </p>
+        <p>
+            Куплеты: {{ hymn.couplets }}
+        </p>
+    </div>
+{% endfor %}
