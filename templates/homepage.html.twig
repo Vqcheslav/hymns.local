@@ -1,16 +1,38 @@
-{% for hymn in hymns %}
-    <div class="hymns-div">
-        <h1>
-            Номер: {{ hymn.hymnId }}
-        </h1>
-        <h6>
-            Категория: {{ hymn.category.title }}
-        </h6>
-        <p class="chorus-p">
-            Припев: {{ hymn.chorus }}
-        </p>
-        <p>
-            Куплеты: {{ hymn.couplets }}
-        </p>
-    </div>
-{% endfor %}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="hymns"></div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        window.addEventListener('load', async function () {
+            let hymnsDiv = document.getElementById('hymns');
+
+            let hymns = await fetch(window.location.origin + '/api/hymns');
+            let hymnsJson = await hymns.json();
+
+            for (let hymn of hymnsJson['data']) {
+                console.log(hymn);
+
+                hymnsDiv.innerHTML += `
+                    <h1>
+                        Номер: ${ hymn['hymnId'] }
+                    </h1>
+                    <h3>
+                        Название: ${ hymn['title'] }
+                    </h3>
+                    <h6>
+                        Категория: ${ hymn['category_title'] }
+                    </h6>
+                    <p class="chorus-p">
+                        Припев: ${ hymn['chorus'] }
+                    </p>
+                    <p>
+                        Куплеты: ${ hymn['couplets'] }
+                    </p>
+                `;
+            }
+        });
+    </script>
+{% endblock %}

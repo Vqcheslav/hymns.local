@@ -47,7 +47,8 @@ class HymnRepository extends ServiceEntityRepository
     public function findMany(int $amount = 100): array
     {
         return $this->createQueryBuilder('h')
-            ->join(Category::class, 'c')
+            ->select('h.hymnId', 'h.title', 'h.chorus', 'h.couplets', 'c.title as category_title')
+            ->join(Category::class, 'c', Join::WITH, 'h.category=c.category_id')
             ->orderBy('h.hymnId', 'ASC')
             ->setMaxResults($amount)
             ->getQuery()
