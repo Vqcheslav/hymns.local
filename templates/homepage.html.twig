@@ -1,7 +1,15 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div id="hymns"></div>
+    {% include "components/header.html.twig" %}
+
+    <h1 class="my-5 display-5 text-center">
+        Песнь возрождения
+    </h1>
+
+    <div class="container">
+        <div id="hymns"></div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
@@ -16,21 +24,25 @@
                 console.log(hymn);
 
                 hymnsDiv.innerHTML += `
-                    <h1>
-                        Номер: ${ hymn['hymnId'] }
-                    </h1>
-                    <h3>
-                        Название: ${ hymn['title'] }
-                    </h3>
-                    <h6>
-                        Категория: ${ hymn['category_title'] }
-                    </h6>
-                    <p class="chorus-p">
-                        Припев: ${ hymn['chorus'] }
-                    </p>
-                    <p>
-                        Куплеты: ${ hymn['couplets'] }
-                    </p>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>
+                                №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+
+                            <p class="text-muted fs-5">
+                                Припев: ${ hymn['chorus'] }
+                            </p>
+                            <p class="text-black fs-5">
+                                Куплеты: ${ hymn['couplets'] }
+                            </p>
+                        </div>
+                        <div class="card-footer fs-6">
+                            Категория: ${ hymn['category_title'] }
+                        </div>
+                    </div>
                 `;
             }
         });
