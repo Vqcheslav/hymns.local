@@ -16,4 +16,12 @@ class HymnController extends AbstractController
 
         return new JsonResponse(['data' => $hymns]);
     }
+
+    #[Route('/api/hymns/{hymnId}', name: 'api.hymns.show', methods: ['GET', 'HEAD'])]
+    public function show(int $hymnId, HymnRepository $hymnRepository): JsonResponse
+    {
+        $hymn = $hymnRepository->findOne($hymnId);
+
+        return new JsonResponse(['data' => $hymn]);
+    }
 }

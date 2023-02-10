@@ -1,0 +1,19 @@
+.toast-level {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: #3b82f6;
+    margin-right: 10px;
+}
+
+.level-warning {
+    background-color: #ffca2c;
+}
+
+.level-error {
+    background-color: #dc3545;
+}
+
+.level-success {
+    background-color: #20c997;
+}

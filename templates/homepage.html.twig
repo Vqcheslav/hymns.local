@@ -17,34 +17,54 @@
         window.addEventListener('load', async function () {
             let hymnsDiv = document.getElementById('hymns');
 
-            let hymns = await fetch(window.location.origin + '/api/hymns');
-            let hymnsJson = await hymns.json();
+            let hymns = await Server.getData('/api/hymns');
 
-            for (let hymn of hymnsJson['data']) {
+            console.log(hymns);
+
+            for (let hymn of hymns) {
                 console.log(hymn);
 
                 hymnsDiv.innerHTML += `
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>
+                    <div id="${ hymn['hymnId'] }" class="open-hymn card mb-3" data-id="${ hymn['hymnId'] }" role="button">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <h3 class="text-start mb-0">
                                 №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
                             </h3>
-                        </div>
-                        <div class="card-body">
-
-                            <p class="text-muted fs-5">
-                                Припев: ${ hymn['chorus'] }
-                            </p>
-                            <p class="text-black fs-5">
-                                Куплеты: ${ hymn['couplets'] }
-                            </p>
-                        </div>
-                        <div class="card-footer fs-6">
-                            Категория: ${ hymn['category_title'] }
                         </div>
                     </div>
                 `;
             }
+
+            document.querySelectorAll('.open-hymn').forEach(function (element) {
+                element.addEventListener('click', async function () {
+                    let hymnId = this.dataset.id;
+
+                    if (! this.classList.contains('opened-hymn')) {
+                        this.classList.add('opened-hymn');
+
+                        let hymn = await Server.getData('/api/hymns/' + hymnId)
+
+                        this.innerHTML = `
+                            <div class="card-header">
+                                <h3>
+                                    №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted fs-5">
+                                    Припев: ${ hymn['chorus'] }
+                                </p>
+                                <p class="text-black fs-5">
+                                    Куплеты: ${ hymn['couplets'] }
+                                </p>
+                            </div>
+                            <div class="card-footer fs-6">
+                                Категория: ${ hymn['category_title'] }
+                            </div>
+                        `;
+                    }
+                })
+            })
         });
     </script>
 {% endblock %}
