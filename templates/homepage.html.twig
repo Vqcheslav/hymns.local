@@ -16,21 +16,52 @@
     <script>
         window.addEventListener('load', async function () {
             let hymnsDiv = document.getElementById('hymns');
+            let hymns;
+            let hymnsCacheKey = 'hymns';
 
-            let hymns = await Server.getData('/api/hymns');
+            if (! Storage.exists(hymnsCacheKey)) {
+                hymns = await Server.getData('/api/hymns');
+                Storage.set(hymnsCacheKey, hymns, (new DateTime()).addMinutes(4));
+            } else {
+                hymns = Storage.get(hymnsCacheKey);
+            }
 
             console.log(hymns);
+
+            function getHymnHtmlCacheKey(hymnId) {
+                return 'hymn_' + hymnId;
+            }
 
             for (let hymn of hymns) {
                 console.log(hymn);
 
+                let hymnHtmlCacheKey = getHymnHtmlCacheKey(hymn['hymnId']);
+
+                let hymnHtml = `
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="text-start mb-0">
+                            №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
+                        </h3>
+                        <span>
+                            ${ hymn['category'] }
+                        </span>
+                    </div>
+                `;
+
+                if (! Storage.exists(hymnHtmlCacheKey)) {
+                    Storage.set(hymnHtmlCacheKey, hymnHtml, (new DateTime()).addMinutes(4));
+                }
+
                 hymnsDiv.innerHTML += `
-                    <div id="${ hymn['hymnId'] }" class="open-hymn card mb-3" data-id="${ hymn['hymnId'] }" role="button">
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <h3 class="text-start mb-0">
-                                №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
-                            </h3>
-                        </div>
+                    <div
+                        id="${ hymn['hymnId'] }"
+                        class="open-hymn card mb-4"
+                        data-id="${ hymn['hymnId'] }"
+                        data-title="${ hymn['title'] }"
+                        data-category="${ hymn['category'] }"
+                        role="button"
+                    >
+                        ${ hymnHtml }
                     </div>
                 `;
             }
@@ -38,30 +69,67 @@
             document.querySelectorAll('.open-hymn').forEach(function (element) {
                 element.addEventListener('click', async function () {
                     let hymnId = this.dataset.id;
+                    let title = this.dataset.title;
+                    let category = this.dataset.category;
 
                     if (! this.classList.contains('opened-hymn')) {
                         this.classList.add('opened-hymn');
 
-                        let hymn = await Server.getData('/api/hymns/' + hymnId)
+                        let couplets;
+
+                        let coupletsCacheKey = hymnId + '_couplets';
+
+                        if (! Storage.exists(coupletsCacheKey)) {
+                            couplets = await Server.getData('/api/couplets/' + hymnId);
+
+                            Storage.set(coupletsCacheKey, couplets, (new DateTime()).addMinutes(4));
+                        } else {
+                            couplets = Storage.get(coupletsCacheKey);
+                        }
+
+                        console.log(hymnId, couplets);
+
+                        let coupletsHtml = '';
+
+                        for (let couplet of couplets) {
+                            if (couplet['isChorus'] === true) {
+                                coupletsHtml += `
+                                    <p class="text-black fs-5 fw-bold mb-1">
+                                        Припев:
+                                    </p>
+                                `;
+                            } else {
+                                coupletsHtml += `
+                                    <p class="text-black fs-5 fw-bold mb-1">
+                                        Куплет ${ couplet['position'] }:
+                                    </p>
+                                `;
+                            }
+
+                            coupletsHtml += `
+                                <p class="text-black fs-5">
+                                    ${ couplet['couplet'] }
+                                </p>
+                            `;
+                        }
 
                         this.innerHTML = `
                             <div class="card-header">
                                 <h3>
-                                    №${ hymn['hymnId'] } <span class="ms-3">${ hymn['title'] }</span>
+                                    №${ hymnId } <span class="ms-3">${ title }</span>
                                 </h3>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted fs-5">
-                                    Припев: ${ hymn['chorus'] }
-                                </p>
-                                <p class="text-black fs-5">
-                                    Куплеты: ${ hymn['couplets'] }
-                                </p>
+                                ${ coupletsHtml }
                             </div>
                             <div class="card-footer fs-6">
-                                Категория: ${ hymn['category_title'] }
+                                Категория: ${ category }
                             </div>
                         `;
+                    } else {
+                        this.classList.remove('opened-hymn');
+
+                        this.innerHTML = Storage.get(getHymnHtmlCacheKey(hymnId));
                     }
                 })
             })

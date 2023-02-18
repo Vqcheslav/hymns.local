@@ -1,4 +1,5 @@
-class Cookie {
+class Cookie
+{
     static COOKIE_TTL = 31536000;
 
     static COOKIE_PATH = '/';
@@ -30,7 +31,8 @@ class Cookie {
     }
 }
 
-class Server {
+class Server
+{
     static GET_PARAMS = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
     });
@@ -200,7 +202,8 @@ class Server {
     }
 }
 
-class Url {
+class Url
+{
     static regexOfLocales = /\/(ru|en)\/*/;
     static arrayOfLocales = ['ru', 'en'];
 
@@ -241,9 +244,18 @@ class Url {
     }
 }
 
-class Storage {
-    static set(key, value) {
+class Storage
+{
+    static set(
+        key,
+        value,
+        dateTimeWhenExpired = (new DateTime()).addHours(4)
+    ) {
         localStorage.setItem(key, JSON.stringify(value));
+        localStorage.setItem(
+            this.getTTLKeyForCache(key),
+            JSON.stringify(dateTimeWhenExpired.getTimeStamp())
+        );
     }
 
     static get(key) {
@@ -255,15 +267,42 @@ class Storage {
     }
 
     static exists(key) {
-        return ! Object.is(localStorage.getItem(key), null);
+        let exists = ! Object.is(localStorage.getItem(key), null);
+
+        if (! exists) {
+            return exists;
+        }
+
+        let expired = this.getDateTimeWhenExpired(key).getTimeStamp() < (new DateTime()).getTimeStamp();
+
+        if (expired === true) {
+            this.remove(key);
+            exists = false;
+        }
+
+        return exists;
     }
 
     static remove(key) {
-        localStorage.removeItem(key)
+        localStorage.removeItem(key);
+        localStorage.removeItem(this.getTTLKeyForCache(key));
+    }
+
+    static getDateTimeWhenExpired(key) {
+        return new DateTime(this.get(this.getTTLKeyForCache(key)));
+    }
+
+    static getTTLKeyForCache(key) {
+        return key + '_ttl';
+    }
+
+    static removeAll() {
+        localStorage.clear();
     }
 }
 
-class Toast {
+class Toast
+{
     static showToastMessageWithTimeout(
         title = 'Validation Error',
         message = 'Please check the entered data',
@@ -304,5 +343,64 @@ class Toast {
             'Неверный запрос: ' + error,
             'error'
         );
+    }
+}
+
+class DateTime
+{
+    dateTime;
+
+    constructor(dateTime = '') {
+        if (dateTime === '') {
+            this.dateTime = new Date();
+        } else {
+            this.dateTime = new Date(dateTime);
+        }
+    }
+
+    getDateObject() {
+        return this.dateTime;
+    }
+
+    getTimeStamp() {
+        return this.dateTime.getTime();
+    }
+
+    addMinutes(minutes) {
+        this.dateTime.setMinutes(
+            this.dateTime.getMinutes() + minutes
+        );
+
+        return this;
+    }
+
+    addHours(hours) {
+        this.addMinutes(hours * 60)
+
+        return this;
+    }
+
+    addDays(days) {
+        this.addHours(days * 24);
+
+        return this;
+    }
+
+    addMonths(months) {
+        this.addDays(months * 30)
+
+        return this;
+    }
+
+    addYears(years) {
+        this.dateTime.setFullYear(
+            this.dateTime.getFullYear() + years
+        );
+
+        return this;
+    }
+
+    toString() {
+        return this.dateTime.toString();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Category;
+use App\Entity\Couplet;
 use App\Entity\Hymn;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -47,7 +48,8 @@ class HymnRepository extends ServiceEntityRepository
     public function findMany(int $amount = 100): array
     {
         return $this->createQueryBuilder('h')
-            ->select('h.hymnId', 'h.title')
+            ->select('h.hymnId', 'h.title', 'k.title as category')
+            ->join(Category::class, 'k', Join::WITH, 'h.category = k.category_id')
             ->orderBy('h.hymnId', 'ASC')
             ->setMaxResults($amount)
             ->getQuery()
@@ -61,10 +63,10 @@ class HymnRepository extends ServiceEntityRepository
     public function findOne(int $hymnId): array
     {
         return $this->createQueryBuilder('h')
-            ->select('h.hymnId', 'h.title', 'h.chorus', 'h.couplets', 'c.title as category_title')
-            ->join(Category::class, 'c', Join::WITH, 'h.category = c.category_id')
-            ->where('h.hymnId = :id')
-            ->setParameter(':id', $hymnId)
+            ->select('h.hymnId', 'h.title', 'k.title as category')
+            ->join(Category::class, 'k', Join::WITH, 'h.category = k.category_id')
+            ->andWhere('h.hymnId = :id')
+            ->setParameter('id', $hymnId)
             ->getQuery()
             ->getOneOrNullResult()
         ;
