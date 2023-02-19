@@ -249,13 +249,14 @@ class Storage
     static set(
         key,
         value,
-        dateTimeWhenExpired = (new DateTime()).addHours(4)
+        timestampWhenExpired = (new DateTime()).addHours(4).getTimestamp()
     ) {
-        localStorage.setItem(key, JSON.stringify(value));
-        localStorage.setItem(
-            this.getTTLKeyForCache(key),
-            JSON.stringify(dateTimeWhenExpired.getTimeStamp())
-        );
+        let cachedObject = {
+            value: value,
+            expiration: timestampWhenExpired
+        };
+
+        localStorage.setItem(key, JSON.stringify(cachedObject));
     }
 
     static get(key) {
@@ -263,37 +264,30 @@ class Storage
             return '';
         }
 
+        return this.getCachedObject(key).value;
+    }
+
+    static getCachedObject(key) {
         return JSON.parse(localStorage.getItem(key));
     }
 
     static exists(key) {
-        let exists = ! Object.is(localStorage.getItem(key), null);
+        let item = this.getCachedObject(key);
 
-        if (! exists) {
-            return exists;
+        if (Object.is(item, null)) {
+            return false;
         }
 
-        let expired = this.getDateTimeWhenExpired(key).getTimeStamp() < (new DateTime()).getTimeStamp();
-
-        if (expired === true) {
+        if (item.expiration < (new Date()).getTime()) {
             this.remove(key);
-            exists = false;
+            return false;
         }
 
-        return exists;
+        return true;
     }
 
     static remove(key) {
         localStorage.removeItem(key);
-        localStorage.removeItem(this.getTTLKeyForCache(key));
-    }
-
-    static getDateTimeWhenExpired(key) {
-        return new DateTime(this.get(this.getTTLKeyForCache(key)));
-    }
-
-    static getTTLKeyForCache(key) {
-        return key + '_ttl';
     }
 
     static removeAll() {
@@ -362,14 +356,20 @@ class DateTime
         return this.dateTime;
     }
 
-    getTimeStamp() {
+    getTimestamp() {
         return this.dateTime.getTime();
     }
 
-    addMinutes(minutes) {
-        this.dateTime.setMinutes(
-            this.dateTime.getMinutes() + minutes
+    addSeconds(seconds) {
+        this.dateTime.setSeconds(
+            this.dateTime.getSeconds() + seconds
         );
+
+        return this;
+    }
+
+    addMinutes(minutes) {
+        this.addSeconds(minutes * 60)
 
         return this;
     }
@@ -382,12 +382,6 @@ class DateTime
 
     addDays(days) {
         this.addHours(days * 24);
-
-        return this;
-    }
-
-    addMonths(months) {
-        this.addDays(months * 30)
 
         return this;
     }

@@ -21,7 +21,7 @@
 
             if (! Storage.exists(hymnsCacheKey)) {
                 hymns = await Server.getData('/api/hymns');
-                Storage.set(hymnsCacheKey, hymns, (new DateTime()).addMinutes(4));
+                Storage.set(hymnsCacheKey, hymns, (new DateTime()).addMinutes(4).getTimestamp());
             } else {
                 hymns = Storage.get(hymnsCacheKey);
             }
@@ -48,9 +48,7 @@
                     </div>
                 `;
 
-                if (! Storage.exists(hymnHtmlCacheKey)) {
-                    Storage.set(hymnHtmlCacheKey, hymnHtml, (new DateTime()).addMinutes(4));
-                }
+                Storage.set(hymnHtmlCacheKey, hymnHtml);
 
                 hymnsDiv.innerHTML += `
                     <div
@@ -82,7 +80,7 @@
                         if (! Storage.exists(coupletsCacheKey)) {
                             couplets = await Server.getData('/api/couplets/' + hymnId);
 
-                            Storage.set(coupletsCacheKey, couplets, (new DateTime()).addMinutes(4));
+                            Storage.set(coupletsCacheKey, couplets, (new DateTime()).addMinutes(4).getTimestamp());
                         } else {
                             couplets = Storage.get(coupletsCacheKey);
                         }
