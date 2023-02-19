@@ -37,7 +37,7 @@ class Couplet
         return $this->hymn;
     }
 
-    public function setHymnId(?Hymn $hymn): self
+    public function setHymn(?Hymn $hymn): self
     {
         $this->hymn = $hymn;
 
@@ -75,7 +75,7 @@ class Couplet
 
     public function setIsChorus(bool $isChorus): self
     {
-        $this->is_chorus = $isChorus;
+        $this->isChorus = $isChorus;
 
         return $this;
     }
