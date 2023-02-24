@@ -3,8 +3,8 @@
 namespace App\Api\Controller;
 
 use App\Repository\HymnRepository;
+use App\Services\ElasticService;
 use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,11 +15,10 @@ class HymnController extends AbstractController
 
     private Client $elasticSearch;
 
-    public function __construct(HymnRepository $hymnRepository)
+    public function __construct(HymnRepository $hymnRepository, ElasticService $elasticService)
     {
         $this->hymnRepository = $hymnRepository;
-        $this->elasticSearch = ClientBuilder::create()
-            ->build();
+        $this->elasticSearch = $elasticService->getElastic();
     }
 
     #[Route('/api/hymns', name: 'api.hymns.index', methods: ['GET', 'HEAD'])]
@@ -42,6 +41,7 @@ class HymnController extends AbstractController
     public function search(string $query): JsonResponse
     {
         $params = [
+            'index' => 'couplets',
             'query' => $query,
         ];
 
