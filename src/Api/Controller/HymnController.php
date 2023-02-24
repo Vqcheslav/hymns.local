@@ -2,7 +2,6 @@
 
 namespace App\Api\Controller;
 
-use App\Repository\CoupletRepository;
 use App\Repository\HymnRepository;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
@@ -16,14 +15,10 @@ class HymnController extends AbstractController
 
     private Client $elasticSearch;
 
-    public function __construct(
-        HymnRepository $hymnRepository,
-        CoupletRepository $coupletRepository
-    )
+    public function __construct(HymnRepository $hymnRepository)
     {
         $this->hymnRepository = $hymnRepository;
         $this->elasticSearch = ClientBuilder::create()
-            ->setApiKey('Z3FUNmQ0WUJNZldUaF9CbEtLMU46ZWV3dF8xN2ZSaGV5S0s1OHoybDNIQQ==')
             ->build();
     }
 
@@ -47,7 +42,7 @@ class HymnController extends AbstractController
     public function search(string $query): JsonResponse
     {
         $params = [
-            'body' => $query,
+            'query' => $query,
         ];
 
         $result = $this->elasticSearch->search($params);
