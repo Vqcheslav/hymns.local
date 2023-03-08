@@ -398,3 +398,48 @@ class DateTime
         return this.dateTime.toString();
     }
 }
+
+class DomElement
+{
+    static show(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-disappear');
+            element.classList.add('animation-appear');
+            element.style = 'display: block;';
+        });
+    }
+
+    static hideWithTimeout(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-appear');
+            element.classList.add('animation-disappear');
+
+            setTimeout(DomElement.hide, 500, element);
+        });
+    }
+
+    static hide(...elements) {
+        elements.forEach(function (element) {
+            element.style = 'display: none;';
+        });
+    }
+
+    static hideVisibleWithTimeout(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-appear');
+            element.classList.add('animation-disappear');
+
+            setTimeout(DomElement.hideVisible, 500, element);
+        });
+    }
+
+    static hideVisible(...elements) {
+        elements.forEach(function (element) {
+            if (window.getComputedStyle(element).display === 'none') {
+                return;
+            }
+
+            element.style = 'display: block; visibility: hidden;';
+        });
+    }
+}

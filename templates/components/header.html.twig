@@ -24,9 +24,12 @@
                     </ul>
                 </li>
             </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Введите для поиска" aria-label="Search">
+            <form id="search-form" class="d-flex search-form" role="search">
+                <input id="search-input" class="form-control me-2" type="search" placeholder="Введите для поиска" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Поиск</button>
+                <div id="search-results" class="search-results">
+                    <ul id="search-results-ul" class="search-results-ul new-scrollbar"></ul>
+                </div>
             </form>
         </div>
     </div>

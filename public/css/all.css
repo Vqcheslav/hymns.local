@@ -1,3 +1,31 @@
+.search-form {
+    position: relative;
+}
+
+.search-results {
+    display: none;
+    position: absolute;
+    top: 35px;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    padding-top: 10px;
+}
+
+.search-results-ul {
+    background-color: #f7f7f7;
+    box-shadow: -5px 5px 10px 0 #d6d6d6;
+    border-radius: 9px;
+    list-style: none;
+    padding: 20px;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.search-result-li {
+    padding: 8px;
+}
+
 .toast-level {
     width: 20px;
     height: 20px;
@@ -16,4 +44,50 @@
 
 .level-success {
     background-color: #20c997;
+}
+
+/* start of scrollbar */
+.new-scrollbar::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+.new-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 9px 9px 9px 9px;
+}
+
+.new-scrollbar::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 9px;
+    border: 1px solid rgba(129, 130, 131, 0.8);
+}
+/* end of scrollbar */
+
+.animation-appear {
+    animation: appear 0.6s;
+}
+
+.animation-disappear {
+    animation: disappear 1s;
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes disappear {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
