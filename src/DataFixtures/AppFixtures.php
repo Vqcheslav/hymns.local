@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $hymnId = 1;
+        $hymnId = 0;
 
         for ($i = 1; $i <= 20; $i++) {
             $category = new Category();
@@ -43,13 +43,13 @@ class AppFixtures extends Fixture
             ]);
 
             for ($j = 1; $j <= random_int(4, 7); $j++) {
+                $hymnId++;
                 $hymn = new Hymn();
                 $hymn->setHymnId($hymnId);
                 $hymn->setCategory($category);
                 $hymnTitle = $this->faker->realText(20);
                 $hymn->setTitle($hymnTitle);
                 $manager->persist($hymn);
-                $hymnId++;
 
                 $this->elasticSearch->index([
                     'index' => 'hymns',

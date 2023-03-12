@@ -14,6 +14,7 @@ window.addEventListener('load', function () {
         let result = await Server.getData('/api/hymns/search/' + query);
 
         console.log(result);
+        searchResultsUl.innerHTML = '';
 
         for (let hit of await result.hits.hits) {
             console.log(hit);

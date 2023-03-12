@@ -42,7 +42,11 @@ class HymnController extends AbstractController
     {
         $params = [
             'index' => 'couplets',
-            'query' => $query,
+            'query' => [
+                'match' => [
+                    'couplet' => $query
+                ]
+            ],
         ];
 
         $result = $this->elasticSearch->search($params);
