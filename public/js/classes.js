@@ -1,3 +1,9 @@
+function isEmpty(object) {
+    return Object
+        .values(object)
+        .every(val => typeof val === "undefined");
+}
+
 class Cookie
 {
     static COOKIE_TTL = 31536000;
@@ -101,7 +107,7 @@ class Server
 
     static async postData(
         uri = '',
-        data = {},
+        body = {},
         headers = {},
         withErrorHandling = true
     ) {
@@ -113,7 +119,7 @@ class Server
         let parameters = {
             method: 'POST',
             headers: headers,
-            body: JSON.stringify(data),
+            body: JSON.stringify(body),
             credentials: 'include',
         };
 
@@ -128,7 +134,7 @@ class Server
 
     static async putData(
         uri = '',
-        data = {},
+        body = {},
         headers = {},
         withErrorHandling = true
     ) {
@@ -140,7 +146,7 @@ class Server
         let parameters = {
             method: 'PUT',
             headers: headers,
-            body: JSON.stringify(data),
+            body: JSON.stringify(body),
             credentials: 'include',
         };
 
@@ -396,5 +402,50 @@ class DateTime
 
     toString() {
         return this.dateTime.toString();
+    }
+}
+
+class DomElement
+{
+    static show(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-disappear');
+            element.classList.add('animation-appear');
+            element.style = 'display: block;';
+        });
+    }
+
+    static hideWithTimeout(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-appear');
+            element.classList.add('animation-disappear');
+
+            setTimeout(DomElement.hide, 500, element);
+        });
+    }
+
+    static hide(...elements) {
+        elements.forEach(function (element) {
+            element.style = 'display: none;';
+        });
+    }
+
+    static hideVisibleWithTimeout(...elements) {
+        elements.forEach(function (element) {
+            element.classList.remove('animation-appear');
+            element.classList.add('animation-disappear');
+
+            setTimeout(DomElement.hideVisible, 500, element);
+        });
+    }
+
+    static hideVisible(...elements) {
+        elements.forEach(function (element) {
+            if (window.getComputedStyle(element).display === 'none') {
+                return;
+            }
+
+            element.style = 'display: block; visibility: hidden;';
+        });
     }
 }

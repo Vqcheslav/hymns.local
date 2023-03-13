@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container">
-        <a class="navbar-brand" href="#">Песнь возрождения</a>
+        <a class="navbar-brand" href="#">Сборник</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,9 +24,21 @@
                     </ul>
                 </li>
             </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Введите для поиска" aria-label="Search">
+            <form id="search-form" class="d-flex search-form" role="search">
+                <input
+                        id="search-input"
+                        class="form-control me-2"
+                        type="search"
+                        placeholder="Введите для поиска"
+                        aria-label="Search"
+                        minlength="4"
+                        maxlength="250"
+                        required
+                >
                 <button class="btn btn-outline-success" type="submit">Поиск</button>
+                <div id="search-results" class="search-results">
+                    <ul id="search-results-ul" class="search-results-ul new-scrollbar"></ul>
+                </div>
             </form>
         </div>
     </div>
