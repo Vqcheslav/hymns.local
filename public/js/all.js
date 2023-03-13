@@ -16,13 +16,36 @@ window.addEventListener('load', function () {
         console.log(result);
         searchResultsUl.innerHTML = '';
 
-        for (let hit of await result.hits.hits) {
+        let hits = await result.hits.hits;
+        DomElement.show(searchResults);
+
+        for (let hit of hits) {
             console.log(hit);
-            DomElement.show(searchResults);
             searchResultsUl.innerHTML += `
-                <li class="search-result-li"><b class="me-2">${ hit._source.hymnId }</b> ${ hit._source.hymnTitle }</li>
+                <li class="search-result-li">
+                    <a class="search-link" href="#${ hit._source.hymnId }" data-hymn-id="${ hit._source.hymnId }">
+                        <div class="d-flex mb-2">
+                            <b class="me-2">${ hit._source.hymnId }</b>
+                            ${ hit._source.hymnTitle }
+                        </div>
+                        <p class="search-result-couplet">${ hit._source.couplet }</p>
+                    </a>
+                </li>
             `;
         }
+
+        if (hits.length === 0) {
+            searchResultsUl.innerHTML = 'К сожалению, ничего не найдено';
+        }
+
+        document.querySelectorAll('.search-link').forEach(function (element) {
+            element.addEventListener('click', function () {
+                let hymn = document.getElementById(this.dataset.hymnId);
+                hymn.classList.add('outline');
+
+                setTimeout(() => hymn.classList.remove('outline'), 10000);
+            });
+        })
     });
 
     searchForm.addEventListener('mouseleave', function () {

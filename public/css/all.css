@@ -18,12 +18,35 @@
     border-radius: 9px;
     list-style: none;
     padding: 20px;
-    max-height: 300px;
+    max-height: 50vh;
     overflow: auto;
 }
 
-.search-result-li {
-    padding: 8px;
+.search-link {
+    display: flex;
+    flex-wrap: wrap;
+    text-decoration: dotted;
+    color: #000000;
+    padding: 9px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-link:hover {
+    color: #ffffff;
+    background-color: #6c757d;
+}
+
+.search-result-couplet {
+    width: 100%;
+    font-size: 12px;
+    word-break: break-word;
+    margin-bottom: 0;
+}
+
+.outline {
+    outline: #3dff00 auto 10px;
 }
 
 .toast-level {

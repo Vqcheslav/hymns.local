@@ -4,7 +4,6 @@ namespace App\Api\Controller;
 
 use App\Repository\HymnRepository;
 use App\Services\ElasticService;
-use Elastic\Elasticsearch\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,18 +12,18 @@ class HymnController extends AbstractController
 {
     private HymnRepository $hymnRepository;
 
-    private Client $elasticSearch;
+    private ElasticService $elasticService;
 
     public function __construct(HymnRepository $hymnRepository, ElasticService $elasticService)
     {
         $this->hymnRepository = $hymnRepository;
-        $this->elasticSearch = $elasticService->getElastic();
+        $this->elasticService = $elasticService;
     }
 
     #[Route('/api/hymns', name: 'api.hymns.index', methods: ['GET', 'HEAD'])]
     public function index(): JsonResponse
     {
-        $hymns = $this->hymnRepository->findMany();
+        $hymns = $this->hymnRepository->findMany(3300);
 
         return new JsonResponse(['data' => $hymns]);
     }
@@ -40,17 +39,8 @@ class HymnController extends AbstractController
     #[Route('/api/hymns/search/{query}', name: 'api.hymns.search', methods: ['GET', 'HEAD'])]
     public function search(string $query): JsonResponse
     {
-        $params = [
-            'index' => 'couplets',
-            'query' => [
-                'match' => [
-                    'couplet' => $query
-                ]
-            ],
-        ];
+        $couplets = $this->elasticService->searchCouplets($query);
 
-        $result = $this->elasticSearch->search($params);
-
-        return new JsonResponse(['data' => $result->asArray()]);
+        return new JsonResponse(['data' => $couplets->asArray()]);
     }
 }

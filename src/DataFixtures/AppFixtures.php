@@ -36,6 +36,11 @@ class AppFixtures extends Fixture
             $category->setTitle($categoryTitle);
             $manager->persist($category);
 
+//            $this->elasticSearch->delete([
+//                'index' => 'categories',
+//                'id'    => $categoryId,
+//            ]);
+
             $this->elasticSearch->index([
                 'index' => 'categories',
                 'id'    => $categoryId,
@@ -44,43 +49,58 @@ class AppFixtures extends Fixture
 
             for ($j = 1; $j <= random_int(4, 7); $j++) {
                 $hymnId++;
+                $firstCouplet = $this->faker->realText(250);
+
                 $hymn = new Hymn();
                 $hymn->setHymnId($hymnId);
                 $hymn->setCategory($category);
-                $hymnTitle = $this->faker->realText(20);
+                $hymnTitle = mb_substr($firstCouplet, 0, 30);
                 $hymn->setTitle($hymnTitle);
                 $manager->persist($hymn);
+
+//                $this->elasticSearch->delete([
+//                    'index' => 'hymns',
+//                    'id'    => $hymnId,
+//                ]);
 
                 $this->elasticSearch->index([
                     'index' => 'hymns',
                     'id'    => $hymnId,
                     'body'  => [
-                        'hymnId' => $hymnId,
+                        'hymnId'        => $hymnId,
                         'categoryTitle' => $categoryTitle,
-                        'title' => $hymnTitle,
+                        'hymnTitle'         => $hymnTitle,
                     ]
                 ]);
 
-                for ($k = 1; $k <= random_int(2, 5); $k++) {
+                for ($position = 1; $position <= random_int(2, 5); $position++) {
                     $isChorus = random_int(0, 1);
-                    $coupletText = $this->faker->realText(250);
-                    $coupletString = $isChorus ? sprintf('Припев %d', $k) : sprintf('Куплет %d', $k);
+                    $coupletText = $position === 1 ? $firstCouplet : $this->faker->realText(250);
+                    $coupletString = $isChorus ? sprintf('Припев %d', $position) : sprintf('Куплет %d', $position);
                     $coupletString = sprintf('%s: %s', $coupletString, $coupletText);
 
                     $couplet = new Couplet();
                     $couplet->setHymn($hymn);
                     $couplet->setCouplet($coupletString);
-                    $couplet->setPosition($k);
+                    $couplet->setPosition($position);
                     $couplet->setIsChorus($isChorus);
                     $manager->persist($couplet);
 
+                    $coupletId = sprintf('%s_%s', $hymnId, $position);
+
+//                    $this->elasticSearch->delete([
+//                        'index' => 'couplets',
+//                        'id'    => $coupletId,
+//                    ]);
+
                     $this->elasticSearch->index([
                         'index' => 'couplets',
+                        'id'    => $coupletId,
                         'body'  => [
-                            'hymnId' => $hymnId,
+                            'hymnId'        => $hymnId,
                             'categoryTitle' => $categoryTitle,
-                            'hymnTitle' => $hymnTitle,
-                            'couplet' => $coupletString,
+                            'hymnTitle'     => $hymnTitle,
+                            'couplet'       => $coupletString,
                         ]
                     ]);
                 }

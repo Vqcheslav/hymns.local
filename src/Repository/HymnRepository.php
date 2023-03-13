@@ -45,7 +45,7 @@ class HymnRepository extends ServiceEntityRepository
     /**
      * @return Hymn[] Returns an array of Hymn objects
      */
-    public function findMany(int $amount = 100): array
+    public function findMany(?int $amount): array
     {
         return $this->createQueryBuilder('h')
             ->select('h.hymnId', 'h.title', 'k.title as category')
