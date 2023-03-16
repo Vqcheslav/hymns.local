@@ -4,7 +4,6 @@ namespace App\Api\Controller;
 
 use App\Repository\CoupletRepository;
 use App\Services\ElasticService;
-use Elastic\Elasticsearch\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;

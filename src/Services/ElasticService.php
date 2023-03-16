@@ -40,11 +40,11 @@ class ElasticService
         return $this->elastic->search($params);
     }
 
-    public function searchHymnsByTitle(string $query)
+    public function searchHymnsByTitle(string $query, int $size = 3)
     {
         $params = [
             'index' => 'hymns',
-            'size'  => 3,
+            'size'  => $size,
             'body'  => [
                 'query' => [
                     'match' => [
@@ -57,11 +57,11 @@ class ElasticService
         return $this->elastic->search($params);
     }
 
-    public function searchCouplets(string $query)
+    public function searchCouplets(string $query, int $size = 5)
     {
         $params = [
             'index' => 'couplets',
-            'size'  => 5,
+            'size'  => $size,
             'body'  => [
                 'query' => [
                     'match' => [
