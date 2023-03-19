@@ -10,17 +10,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    private MessageBusInterface $bus;
-
-    public function __construct(MessageBusInterface $bus)
-    {
-        $this->bus = $bus;
+    public function __construct(
+        private readonly MessageBusInterface $bus
+    ) {
     }
 
     #[Route('/api/user/send', name: 'api.user.send', methods: ['GET', 'HEAD'])]
     public function send(): JsonResponse
     {
-        // will cause the MailNotificationHandler to be called
         $this->bus->dispatch(new MailNotification('Look! I created a message!'));
 
         return new JsonResponse(['result' =>  true]);

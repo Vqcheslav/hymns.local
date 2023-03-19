@@ -10,11 +10,9 @@ use Symfony\Component\Mime\Email;
 #[AsMessageHandler]
 class MailNotificationHandler
 {
-    private MailerInterface $mailer;
-
-    public function __construct(MailerInterface $mailer)
-    {
-        $this->mailer = $mailer;
+    public function __construct(
+        private readonly MailerInterface $mailer
+    ) {
     }
 
     public function __invoke(MailNotification $message)

@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Response\Elasticsearch;
+use Http\Promise\Promise;
 
 class ElasticService
 {
-    private \Elastic\Elasticsearch\Client $elastic;
+    private Client $elastic;
 
     public function __construct()
     {
@@ -14,14 +17,14 @@ class ElasticService
     }
 
     /**
-     * @return \Elastic\Elasticsearch\Client
+     * @return Client
      */
-    public function getElastic(): \Elastic\Elasticsearch\Client
+    public function getElastic(): Client
     {
         return $this->elastic;
     }
 
-    public function searchHymnsByTitleStrictly(string $query)
+    public function searchHymnsByTitleStrictly(string $query): Elasticsearch|Promise
     {
         $params = [
             'index' => 'hymns',
@@ -40,7 +43,7 @@ class ElasticService
         return $this->elastic->search($params);
     }
 
-    public function searchHymnsByTitle(string $query, int $size = 3)
+    public function searchHymnsByTitle(string $query, int $size = 3): Elasticsearch|Promise
     {
         $params = [
             'index' => 'hymns',
@@ -57,7 +60,7 @@ class ElasticService
         return $this->elastic->search($params);
     }
 
-    public function searchCouplets(string $query, int $size = 5)
+    public function searchCouplets(string $query, int $size = 5): Elasticsearch|Promise
     {
         $params = [
             'index' => 'couplets',

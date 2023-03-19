@@ -4,11 +4,9 @@ namespace App\Message;
 
 class MailNotification
 {
-    private string $content;
-
-    public function __construct(string $content)
-    {
-        $this->content = $content;
+    public function __construct(
+        private readonly string $content
+    ) {
     }
 
     public function getContent(): string
