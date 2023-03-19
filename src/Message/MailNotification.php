@@ -6,9 +6,9 @@ class MailNotification
 {
     private string $content;
 
-    public function __construct()
+    public function __construct(string $content)
     {
-
+        $this->content = $content;
     }
 
     public function getContent(): string
