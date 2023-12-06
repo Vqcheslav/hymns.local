@@ -14,7 +14,6 @@ class MailNotificationHandler
         private readonly MailerInterface $mailer
     ) {
     }
-
     public function __invoke(MailNotification $message)
     {
         $email = (new Email())

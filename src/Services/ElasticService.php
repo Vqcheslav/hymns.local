@@ -16,9 +16,6 @@ class ElasticService
         $this->elastic = ClientBuilder::create()->build();
     }
 
-    /**
-     * @return Client
-     */
     public function getElastic(): Client
     {
         return $this->elastic;

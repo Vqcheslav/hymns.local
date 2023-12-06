@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0"
+    >
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Конструктор баннеров">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="icon" href="/img/logo.png" type="image/png">
+    <link rel="stylesheet" href="/css/vendor/normalize.min.css">
+    <link rel="stylesheet" href="/css/forms.css">
+
+    <title>Конструктор баннеров</title>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "vue": "/js/vendor/vue.3.2.47.esm-browser.prod.min.js"
+        }
+      }
+    </script>
+</head>
+<body>
+
+<div id="app">
+    <form v-if="showLogin" @submit.prevent="submitLoginForm" class="container-first">
+        <img class="logo" src="/img/logo.png" alt="Logo">
+        <input
+            v-model="email"
+            class="form-input"
+            type="email"
+            placeholder="Email"
+            minlength="4"
+            maxlength="100"
+            pattern=".+@((kpigroups.com)|(instafxgroup.com)|(mail.insta.kim))"
+            title="Используйте вашу рабочую почту"
+            autocomplete="on"
+            required
+        >
+        <input
+            v-model="password"
+            class="form-input"
+            type="password"
+            placeholder="Пароль"
+            minlength="8"
+            maxlength="100"
+            autocomplete="on"
+            required
+        >
+        <button class="button">
+            Войти
+        </button>
+        <p class="p">
+            Нет аккаунта или забыли пароль?
+        </p>
+        <a @click.prevent="showRegisterForm" class="link">
+            Регистрация
+        </a>
+    </form>
+    <form v-else-if="showRegister" @submit.prevent="submitRegisterForm" class="container-first">
+        <img class="logo" src="/img/logo.png" alt="Logo">
+        <input
+            v-model="name"
+            class="form-input"
+            type="text"
+            placeholder="ФИО"
+            minlength="4"
+            maxlength="100"
+            pattern="[а-яА-Яa-zA-ZЁё]+[а-яА-Яa-zA-ZЁё ]*"
+            title="Введите имя и фамилию на латинице/кириллице."
+            autocomplete="on"
+            required
+        >
+        <input
+            v-model="email"
+            class="form-input"
+            type="email"
+            placeholder="Email"
+            minlength="4"
+            maxlength="100"
+            pattern=".+@((kpigroups.com)|(instafxgroup.com)|(mail.insta.kim))"
+            title="Используйте вашу рабочую почту"
+            autocomplete="on"
+            required
+        >
+        <button class="button">
+            Зарегистрироваться
+        </button>
+        <a @click.prevent="showLoginForm" class="link">
+            У меня уже есть аккаунт
+        </a>
+    </form>
+    <div v-else-if="showMessage" class="container-first">
+        <img class="logo" src="/img/logo.png" alt="Logo">
+        <p class="big-p">
+            {{ message }}
+        </p>
+        <a @click.prevent="showLoginForm" class="link">
+            Войти
+        </a>
+    </div>
+</div>
+
+<script type="module">
+    import {createApp} from 'vue';
+
+    createApp({
+        data() {
+            return {
+                email: '',
+                password: '',
+                name: '',
+                showLogin: true,
+                showRegister: true,
+                showMessage: true,
+                loading: 'Ожидайте, пожалуйста...',
+                message: 'Ожидайте, пожалуйста...',
+            };
+        },
+        methods: {
+            async submitLoginForm() {
+                this.message = this.loading;
+
+                this.showNotification();
+
+                let response = await fetch('/api/login', {
+                    method: "POST",
+                    body: JSON.stringify({"email": this.email, "password": this.password}),
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                });
+                let responseJson = await response.json();
+                this.message = responseJson.message ?? 'Произошла ошибка';
+
+                if (responseJson.ok) {
+                    await fetch('/login', {
+                        method: "POST",
+                        body: JSON.stringify({
+                            "email": this.email,
+                            "password": this.password,
+                            "csrf-token": document.querySelector('meta[name="csrf-token"]').content
+                        }),
+                        headers: {"Content-Type": "application/json"}
+                    });
+                }
+            },
+            async submitRegisterForm() {
+                this.message = this.loading;
+
+                this.showNotification();
+
+                let response = await fetch('/api/register', {
+                    method: "POST",
+                    body: JSON.stringify({"name": this.name, "email": this.email}),
+                    headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    }
+                });
+                let responseJson = await response.json();
+                this.message = responseJson.message ?? 'Произошла ошибка';
+            },
+            showRegisterForm() {
+                this.showLogin = false;
+                this.showRegister = true;
+            },
+            showLoginForm() {
+                this.showLogin = true;
+                this.showRegister = false;
+            },
+            showNotification() {
+                this.showLogin = false;
+                this.showRegister = false;
+                this.showMessage = true;
+            }
+        },
+    }).mount('#app');
+</script>
+
+</body>
+</html>
