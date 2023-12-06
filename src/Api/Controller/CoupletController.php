@@ -4,21 +4,16 @@ namespace App\Api\Controller;
 
 use App\Repository\CoupletRepository;
 use App\Services\ElasticService;
-use Elastic\Elasticsearch\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CoupletController extends AbstractController
 {
-    private CoupletRepository $coupletRepository;
-
-    private ElasticService $elasticService;
-
-    public function __construct(CoupletRepository $coupletRepository, ElasticService $elasticService)
-    {
-        $this->coupletRepository = $coupletRepository;
-        $this->elasticService = $elasticService;
+    public function __construct(
+        private readonly CoupletRepository $coupletRepository,
+        private readonly ElasticService    $elasticService
+    ) {
     }
 
     #[Route('/api/couplets/{hymnId}', name: 'api.couplets.index', methods: ['GET', 'HEAD'])]

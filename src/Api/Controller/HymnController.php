@@ -10,14 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HymnController extends AbstractController
 {
-    private HymnRepository $hymnRepository;
-
-    private ElasticService $elasticService;
-
-    public function __construct(HymnRepository $hymnRepository, ElasticService $elasticService)
-    {
-        $this->hymnRepository = $hymnRepository;
-        $this->elasticService = $elasticService;
+    public function __construct(
+        private readonly HymnRepository $hymnRepository,
+        private readonly ElasticService $elasticService
+    ) {
     }
 
     #[Route('/api/hymns', name: 'api.hymns.index', methods: ['GET', 'HEAD'])]
